@@ -21,33 +21,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// tag::classShell[]
 @Controller
 @RequestMapping("/design")
 @SessionAttributes("order")
 public class DesignTacoController {
   
-//end::classShell[]
-
-//tag::bothRepoProperties[]
-//tag::ingredientRepoProperty[]
   private final IngredientRepository ingredientRepo;
   
-//end::ingredientRepoProperty[]
-  private TacoRepository designRepo;
+  private final TacoRepository designRepo;
 
-//end::bothRepoProperties[]
-  
   /*
-// tag::ingredientRepoOnlyCtor[]
   @Autowired
   public DesignTacoController(IngredientRepository ingredientRepo) {
     this.ingredientRepo = ingredientRepo;
   }
-// end::ingredientRepoOnlyCtor[]
    */
 
-  //tag::bothRepoCtor[]
   @Autowired
   public DesignTacoController(
         IngredientRepository ingredientRepo, 
@@ -56,26 +45,21 @@ public class DesignTacoController {
     this.designRepo = designRepo;
   }
 
-  //end::bothRepoCtor[]
-  
-  // tag::modelAttributes[]
   @ModelAttribute(name = "order")
   public Order order() {
     return new Order();
   }
-  
+
+  // TODO: Check ist this really needed?
   @ModelAttribute(name = "taco")
   public Taco taco() {
     return new Taco();
   }
 
-  // end::modelAttributes[]
-  // tag::showDesignForm[]
-  
   @GetMapping
   public String showDesignForm(Model model) {
     List<Ingredient> ingredients = new ArrayList<>();
-    ingredientRepo.findAll().forEach(i -> ingredients.add(i));
+    ingredientRepo.findAll().forEach(ingredients::add);
     
     Type[] types = Ingredient.Type.values();
     for (Type type : types) {
@@ -85,9 +69,7 @@ public class DesignTacoController {
 
     return "design";
   }
-//end::showDesignForm[]
 
-  //tag::processDesign[]
   @PostMapping
   public String processDesign(
       @Valid Taco design, Errors errors, 
@@ -102,8 +84,7 @@ public class DesignTacoController {
 
     return "redirect:/orders/current";
   }
-  //end::processDesign[]
-  
+
   private List<Ingredient> filterByType(
       List<Ingredient> ingredients, Type type) {
     return ingredients
@@ -112,14 +93,4 @@ public class DesignTacoController {
               .collect(Collectors.toList());
   }
 
-  /*
-//tag::classShell[]
-
-  ...
-
-//end::classShell[]
-   */
-//tag::classShell[]
-
 }
-//end::classShell[]

@@ -1,4 +1,3 @@
-// tag::core[]
 package tacos.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,9 +16,9 @@ import java.util.Map;
 @Repository
 public class JdbcOrderRepository implements OrderRepository {
 
-  private SimpleJdbcInsert orderInserter;
-  private SimpleJdbcInsert orderTacoInserter;
-  private ObjectMapper objectMapper;
+  private final SimpleJdbcInsert orderInserter;
+  private final SimpleJdbcInsert orderTacoInserter;
+  private final ObjectMapper objectMapper;
 
   @Autowired
   public JdbcOrderRepository(JdbcTemplate jdbc) {
@@ -32,9 +31,7 @@ public class JdbcOrderRepository implements OrderRepository {
 
     this.objectMapper = new ObjectMapper();
   }
-// end::core[]
 
-// tag::save[]
   @Override
   public Order save(Order order) {
     order.setPlacedAt(new Date());
@@ -50,15 +47,10 @@ public class JdbcOrderRepository implements OrderRepository {
 
   private long saveOrderDetails(Order order) {
     @SuppressWarnings("unchecked")
-    Map<String, Object> values =
-        objectMapper.convertValue(order, Map.class);
+    Map<String, Object> values = objectMapper.convertValue(order, Map.class);
     values.put("placedAt", order.getPlacedAt());
 
-    long orderId =
-        orderInserter
-            .executeAndReturnKey(values)
-            .longValue();
-    return orderId;
+    return orderInserter.executeAndReturnKey(values).longValue();
   }
 
   private void saveTacoToOrder(Taco taco, long orderId) {
@@ -67,16 +59,5 @@ public class JdbcOrderRepository implements OrderRepository {
     values.put("taco", taco.getId());
     orderTacoInserter.execute(values);
   }
-// end::save[]
 
-/*
-// tag::core[]
-
-...
-
-// end::core[]
- */
-
-// tag::core[]
 }
-// end::core[]

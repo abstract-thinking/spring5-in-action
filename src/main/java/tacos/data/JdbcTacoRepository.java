@@ -17,7 +17,7 @@ import java.util.Date;
 @Repository
 public class JdbcTacoRepository implements TacoRepository {
 
-  private JdbcTemplate jdbc;
+  private final JdbcTemplate jdbc;
 
   public JdbcTacoRepository(JdbcTemplate jdbc) {
     this.jdbc = jdbc;
@@ -34,28 +34,26 @@ public class JdbcTacoRepository implements TacoRepository {
     return taco;
   }
 
+  // Fixes NPE as described here: https://github.com/habuma/spring-in-action-5-samples/pull/32
   private long saveTacoInfo(Taco taco) {
     taco.setCreatedAt(new Date());
-    PreparedStatementCreator psc =
-        new PreparedStatementCreatorFactory(
+    PreparedStatementCreatorFactory pscf = new PreparedStatementCreatorFactory(
             "insert into Taco (name, createdAt) values (?, ?)",
             Types.VARCHAR, Types.TIMESTAMP
-        ).newPreparedStatementCreator(
+    );
+    pscf.setReturnGeneratedKeys(true);
+    PreparedStatementCreator psc = pscf.newPreparedStatementCreator(
             Arrays.asList(
-                taco.getName(),
-                new Timestamp(taco.getCreatedAt().getTime())));
+                    taco.getName(),
+                    new Timestamp(taco.getCreatedAt().getTime())));
 
     KeyHolder keyHolder = new GeneratedKeyHolder();
     jdbc.update(psc, keyHolder);
 
-    // Awesome there could be NPE, the code got the NPE
-    // The original code runs without exception. Copied 1:1
-    // keyHolder.getKey().longValue();
-    return 1L; // FIXME
+    return keyHolder.getKey().longValue();
   }
 
-  private void saveIngredientToTaco(
-          Ingredient ingredient, long tacoId) {
+  private void saveIngredientToTaco(Ingredient ingredient, long tacoId) {
     jdbc.update(
         "insert into Taco_Ingredients (taco, ingredient) " +
         "values (?, ?)",

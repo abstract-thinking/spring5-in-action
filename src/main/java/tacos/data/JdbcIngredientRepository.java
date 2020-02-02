@@ -1,6 +1,4 @@
-// tag::classShell[]
 package tacos.data;
-//end::classShell[]
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -10,31 +8,22 @@ import tacos.Ingredient;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-//tag::classShell[]
-
 @Repository
-public class JdbcIngredientRepository
-    implements IngredientRepository {
+public class JdbcIngredientRepository implements IngredientRepository {
 
-  //tag::jdbcTemplate[]
-  private JdbcTemplate jdbc;
-  
-  //end::jdbcTemplate[]
+  private final JdbcTemplate jdbc;
 
   @Autowired
   public JdbcIngredientRepository(JdbcTemplate jdbc) {
     this.jdbc = jdbc;
   }
-//end::classShell[]
 
-  //tag::finders[]
   @Override
   public Iterable<Ingredient> findAll() {
     return jdbc.query("select id, name, type from Ingredient",
         this::mapRowToIngredient);
   }
 
-  // tag::findOne[]
   @Override
   public Ingredient findById(String id) {
     return jdbc.queryForObject(
@@ -42,12 +31,7 @@ public class JdbcIngredientRepository
         this::mapRowToIngredient, id);
   }
   
-  // end::findOne[]
-  
-  //end::finders[]
-
   /*
-  //tag::preJava8RowMapper[]
   @Override
   public Ingredient findOne(String id) {
     return jdbc.queryForObject(
@@ -62,10 +46,8 @@ public class JdbcIngredientRepository
           };
         }, id);
   }
-  //end::preJava8RowMapper[]
    */
   
-  //tag::save[]
   @Override
   public Ingredient save(Ingredient ingredient) {
     jdbc.update(
@@ -75,10 +57,7 @@ public class JdbcIngredientRepository
         ingredient.getType().toString());
     return ingredient;
   }
-  //end::save[]
 
-  // tag::findOne[]
-  //tag::finders[]
   private Ingredient mapRowToIngredient(ResultSet rs, int rowNum)
       throws SQLException {
     return new Ingredient(
@@ -86,17 +65,4 @@ public class JdbcIngredientRepository
         rs.getString("name"),
         Ingredient.Type.valueOf(rs.getString("type")));
   }
-  //end::finders[]
-  // end::findOne[]
-
-  
-  /*
-//tag::classShell[]
-
-  ...
-//end::classShell[]
-   */
-//tag::classShell[]
-
 }
-//end::classShell[]

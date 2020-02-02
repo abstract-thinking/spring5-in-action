@@ -10,15 +10,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-//tag::newFields[]
 @Data
 public class Order {
   
   private Long id;
   
   private Date placedAt;
-  
-//end::newFields[]
 
   @NotBlank(message="Delivery name is required")
   private String deliveryName;
@@ -51,13 +48,4 @@ public class Order {
     this.tacos.add(design);
   }
   
-  /*
-// tag::newFields[]
-  ...
-
-// end::newFields[]
-   */
-//tag::newFields[]
 }
-//end::newFields[]
-

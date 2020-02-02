@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @SessionAttributes("order")
 public class OrderController {
   
-  private OrderRepository orderRepo;
+  private final OrderRepository orderRepo;
 
   public OrderController(OrderRepository orderRepo) {
     this.orderRepo = orderRepo;
@@ -29,8 +29,7 @@ public class OrderController {
   }
 
   @PostMapping
-  public String processOrder(@Valid Order order, Errors errors, 
-                             SessionStatus sessionStatus) {
+  public String processOrder(@Valid Order order, Errors errors, SessionStatus sessionStatus) {
     if (errors.hasErrors()) {
       return "orderForm";
     }

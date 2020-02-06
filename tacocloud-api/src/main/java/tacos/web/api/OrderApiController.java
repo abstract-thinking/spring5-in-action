@@ -1,5 +1,7 @@
 package tacos.web.api;
 
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tacos.Order;
 import tacos.data.OrderRepository;
+import tacos.messaging.OrderMessagingService;
 
+@Slf4j
 @RestController
 @RequestMapping(path="/orders",
                 produces="application/json")
@@ -24,9 +28,11 @@ import tacos.data.OrderRepository;
 public class OrderApiController {
 
   private OrderRepository repo;
+  private OrderMessagingService orderMessages;
 
-  public OrderApiController(OrderRepository repo) {
+  public OrderApiController(OrderRepository repo, OrderMessagingService orderMessages) {
     this.repo = repo;
+    this.orderMessages = orderMessages;
   }
   
   @GetMapping(produces="application/json")
@@ -37,6 +43,9 @@ public class OrderApiController {
   @PostMapping(consumes="application/json")
   @ResponseStatus(HttpStatus.CREATED)
   public Order postOrder(@RequestBody Order order) {
+    log.error("RECEIVED: " + order);
+
+    orderMessages.sendOrder(order);
     return repo.save(order);
   }
 

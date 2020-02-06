@@ -12,8 +12,8 @@
 
 	<parent>
 		<groupId>sia</groupId>
-		<artifactId>taco-cloud-parent</artifactId>
-		<version>0.0.7-SNAPSHOT</version>
+  	<artifactId>taco-cloud-parent</artifactId>
+		<version>0.0.8-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>com.jayway.jsonpath</groupId>
 			<artifactId>json-path</artifactId>
-		</dependency>
+    		</dependency>
 
 		<!-- Test dependencies -->
 		<dependency>
@@ -58,12 +58,4 @@
 
 	</dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 </project>

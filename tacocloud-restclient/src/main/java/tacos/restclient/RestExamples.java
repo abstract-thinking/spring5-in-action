@@ -1,8 +1,6 @@
 package tacos.restclient;
 
-import java.net.URI;
-import java.util.List;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
@@ -11,10 +9,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.client.Traverson;
 import org.springframework.web.client.RestTemplate;
-
-import lombok.extern.slf4j.Slf4j;
 import tacos.Ingredient;
-import tacos.Taco;
+
+import java.net.URI;
+import java.util.List;
 
 @SpringBootConfiguration
 @ComponentScan
@@ -64,12 +62,12 @@ public class RestExamples {
       Ingredient chix = new Ingredient("CHIX", "Shredded Chicken", Ingredient.Type.PROTEIN);
       Ingredient chixAfter = tacoCloudClient.createIngredient(chix);
       log.info("AFTER=1:  " + chixAfter);
-//      Ingredient beefFajita = new Ingredient("BFFJ", "Beef Fajita", Ingredient.Type.PROTEIN);
-//      URI uri = tacoCloudClient.createIngredient(beefFajita);
-//      log.info("AFTER-2:  " + uri);      
-//      Ingredient shrimp = new Ingredient("SHMP", "Shrimp", Ingredient.Type.PROTEIN);
-//      Ingredient shrimpAfter = tacoCloudClient.createIngredient(shrimp);
-//      log.info("AFTER-3:  " + shrimpAfter);      
+      Ingredient beefFajita = new Ingredient("BFFJ", "Beef Fajita", Ingredient.Type.PROTEIN);
+      URI uri = tacoCloudClient.createIngredient2(beefFajita);
+      log.info("AFTER-2:  " + uri);      
+      Ingredient shrimp = new Ingredient("SHMP", "Shrimp", Ingredient.Type.PROTEIN);
+      Ingredient shrimpAfter = tacoCloudClient.createIngredient3(shrimp);
+      log.info("AFTER-3:  " + shrimpAfter);      
     };
   }
 
@@ -78,13 +76,6 @@ public class RestExamples {
   public CommandLineRunner deleteAnIngredient(TacoCloudClient tacoCloudClient) {
     return args -> {
       log.info("----------------------- DELETE -------------------------");
-      // start by adding a few ingredients so that we can delete them later...
-      Ingredient beefFajita = new Ingredient("BFFJ", "Beef Fajita", Ingredient.Type.PROTEIN);
-      tacoCloudClient.createIngredient(beefFajita);
-      Ingredient shrimp = new Ingredient("SHMP", "Shrimp", Ingredient.Type.PROTEIN);
-      tacoCloudClient.createIngredient(shrimp);
-
-      
       Ingredient before = tacoCloudClient.getIngredientById("CHIX");
       log.info("BEFORE:  " + before);
       tacoCloudClient.deleteIngredient(before);
@@ -136,17 +127,6 @@ public class RestExamples {
         log.info("   -  " + ingredient);
       }
       tacoCloudClient.deleteIngredient(pico);
-    };
-  }
-  
-  @Bean
-  public CommandLineRunner traversonRecentTacos(TacoCloudClient tacoCloudClient) {
-    return args -> {
-      Iterable<Taco> recentTacos = tacoCloudClient.getRecentTacosWithTraverson();
-      log.info("----------------------- GET RECENT TACOS WITH TRAVERSON -------------------------");
-      for (Taco taco : recentTacos) {
-        log.info("   -  " + taco);
-      }
     };
   }
 
